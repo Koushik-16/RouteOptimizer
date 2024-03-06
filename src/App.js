@@ -1,9 +1,8 @@
 import React from 'react';
 import { GoogleMap, useLoadScript, Marker, DirectionsService, DirectionsRenderer, } from '@react-google-maps/api';
 import { useState, useEffect } from 'react';
-import { Button, Flex, Spinner } from '@chakra-ui/react';
+import { Alert, Button, Flex, Spinner , AlertIcon } from '@chakra-ui/react';
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
 
 const libraries = ['places'];
 const mapContainerStyle = {
@@ -27,7 +26,7 @@ const App = () => {
 
 useEffect(() => {
   
-}, [dis ,path  ])
+}, [dis ,path ])
 
 
 
@@ -48,8 +47,8 @@ useEffect(() => {
 
   }
 
-  function resetmap() {
-    setcount(0);
+  async function resetmap() {
+     setcount(0);
     setMarkers([]);
     setdis(0);
     setload(false);
@@ -131,7 +130,7 @@ useEffect(() => {
           Calculate optimal Path
         </Button> </Flex>}
 
-{reset &&  <Flex minWidth='max-content' justifyContent='center'> <Button onClick={resetmap} colorScheme='teal' size='lg'>
+{reset &&  <Flex minWidth='max-content' justifyContent='center'> <Button onClick={() => {resetmap()}} colorScheme='teal' size='lg'>
         
        Reset Map
       </Button> </Flex>}
@@ -141,7 +140,7 @@ useEffect(() => {
             position={{
               lat: marker.lat,
               lng: marker.lng
-            }} />   
+            }} /> 
         ))}
         {path.length > 1 &&  <DirectionsService
           options={{
@@ -154,6 +153,13 @@ useEffect(() => {
         />}
 
      {directions && <DirectionsRenderer directions={directions}  options={{ draggable: true , preserveViewport : true }}  />} 
+     {directions && <Alert status='success' textAlign='center' flexDirection='row'  
+  alignItems='center'
+  justifyContent='center'>
+    <AlertIcon />
+   Distance of the optimal path is {dis} miles
+  </Alert>}
+
       </GoogleMap>
     </Flex>
   );
