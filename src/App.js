@@ -206,7 +206,7 @@ const  directionsCallback =  async (response) => {
   alignItems='center'
   justifyContent='center'>
     <AlertIcon />
-   Distance of the optimal path is {Math.round(dis * 1.609344)} Kilometers
+   Distance of the optimal path is {dis /1000.0} Kilometers
   </Alert>}
 
       </GoogleMap>
