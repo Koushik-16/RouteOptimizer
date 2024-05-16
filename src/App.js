@@ -27,10 +27,6 @@ const App = () => {
   const [users, setusers] = useState([]);
   const [countuser, setcountuser] = useState(0);
 
-// useEffect(() => {
-  
-// }, [dis ,path ])
-
 
 const  directionsCallback =  async (response) => {
   if (response !== null) {
