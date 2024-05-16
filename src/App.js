@@ -43,10 +43,6 @@ const  directionsCallback =  async (response) => {
 };
 
 
-
-
-
- 
   async function calculateDistance() {
     setload(true);
     const url = 'http://localhost:8080/'; 
@@ -70,10 +66,19 @@ const  directionsCallback =  async (response) => {
 
   }
 
-   function resetmap(e) {
-  
-  
-    window.location.reload();
+   async function resetmap(e) {
+    // window.location.reload();
+    setDirections([]);
+    setpath([]);
+    setMarkers([]);
+    setcount(0);
+    setdis(0);
+    setusers([]);
+    setcountuser(0);
+    setload(false);
+    setreset(false);
+    setinput('warehouse');
+   
     
   }
 
