@@ -1,7 +1,7 @@
 import React from 'react';
-import { GoogleMap, useLoadScript, Marker, DirectionsService, DirectionsRenderer,Polyline } from '@react-google-maps/api';
-import { useState, useEffect } from 'react';
-import { Alert, Button, Flex, Spinner , AlertIcon } from '@chakra-ui/react';
+import { GoogleMap, useLoadScript, Marker, DirectionsService, DirectionsRenderer } from '@react-google-maps/api';
+import { useState  } from 'react';
+import { Alert, Button, Flex, Spinner, AlertIcon } from '@chakra-ui/react';
 import axios from "axios";
 
 const libraries = ['places'];
@@ -28,46 +28,42 @@ const App = () => {
   const [countuser, setcountuser] = useState(0);
 
 
-const  directionsCallback =  async (response) => {
-  if (response !== null) {
-    if (response.status === 'OK') {
-      
-      if(directions.length <= path.length) setDirections([...directions , response]);
-      setreset(true);
-      setload(false);
-      setcountuser(0);
-    } else {
-      console.error(`Error fetching directions: ${response.status}`);
+  const directionsCallback = (response) => {
+    if (response !== null) {
+      if (response.status === 'OK') {
+
+        if (directions.length <= path.length) setDirections([...directions, response]);
+        setreset(true);
+        setload(false);
+        setcountuser(0);
+      } else {
+        console.error(`Error fetching directions: ${response.status}`);
+      }
     }
-  }
-};
+  } ;
 
 
   async function calculateDistance() {
     setload(true);
-    const url = 'http://localhost:8080/'; 
-    // console.log(markers);
-    // console.log(rider);
-    // console.log(users);
-     await axios.post(url , {markers , users} )
-    .then(res => {
-     
-      // console.log(res.data);
-      setpath(res.data.path);
-     setdis(res.data.dist);
-    
+    const url = 'http://localhost:8080/';
 
-    
-    });
-   
-   
+    await axios.post(url, { markers, users })
+      .then(res => {
 
-     
+        setpath(res.data.path);
+        setdis(res.data.dist);
+
+
+
+      });
+
+
+
+
 
   }
 
-   async function resetmap(e) {
-    // window.location.reload();
+  async function resetmap(e) {
     setDirections([]);
     setpath([]);
     setMarkers([]);
@@ -78,11 +74,11 @@ const  directionsCallback =  async (response) => {
     setload(false);
     setreset(false);
     setinput('warehouse');
-   
-    
+
+
   }
 
- const { isLoaded, loadError } =  useLoadScript({
+  const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_MAP_APIKEY,
     libraries,
   });
@@ -92,39 +88,39 @@ const  directionsCallback =  async (response) => {
   }
 
   if (!isLoaded) {
-    return   <Flex height={"100vh"} width = {"100vw"} alignItems={'center'} justifyContent={'center'} >
-    <Spinner
-    thickness='4px'
-    speed='0.65s'
-    emptyColor='gray.200'
-    color='blue.500'
-    size='xl'
-  />
-  </Flex>
+    return <Flex height={"100vh"} width={"100vw"} alignItems={'center'} justifyContent={'center'} >
+      <Spinner
+        thickness='4px'
+        speed='0.65s'
+        emptyColor='gray.200'
+        color='blue.500'
+        size='xl'
+      />
+    </Flex>
   }
 
   const onMapClick = (e) => {
-    if(input === 'warehouse') {
+    if (input === 'warehouse') {
       setcount(count + 1);
-    setMarkers((current) => [
-      ...current,
-      {
-        lat: e.latLng.lat(),
-        lng: e.latLng.lng()
-      }
-    ]);
-    }else if(input === 'user') {
+      setMarkers((current) => [
+        ...current,
+        {
+          lat: e.latLng.lat(),
+          lng: e.latLng.lng()
+        }
+      ]);
+    } else if (input === 'user') {
       setcountuser(countuser + 1);
-    setusers((current) => [
-      ...current,
-      {
-        lat: e.latLng.lat(),
-        lng: e.latLng.lng()
-      }
-    ]);
+      setusers((current) => [
+        ...current,
+        {
+          lat: e.latLng.lat(),
+          lng: e.latLng.lng()
+        }
+      ]);
     }
-    
-  }
+
+  } ;
 
   function selectuser() {
     setinput('user');
@@ -139,76 +135,70 @@ const  directionsCallback =  async (response) => {
         zoom={8}
         center={center}
         onClick={onMapClick}
-      
+
       >
-       {load &&  <Flex height={"100vh"} width = {"100vw"} alignItems={'center'} justifyContent={'center'} >
-    <Spinner
-    thickness='4px'
-    speed='0.65s'
-    emptyColor='gray.200'
-    color='blue.500'
-    size='xl'
-  />
-  </Flex>}
-      
-        {/* {count >= 2 && !reset && <Flex minWidth='max-content' justifyContent='center'> <Button onClick={calculateDistance} colorScheme='teal' size='lg'>
-        
-          Calculate optimal Path
-        </Button> </Flex>}*/}
+        {load && <Flex height={"100vh"} width={"100vw"} alignItems={'center'} justifyContent={'center'} >
+          <Spinner
+            thickness='4px'
+            speed='0.65s'
+            emptyColor='gray.200'
+            color='blue.500'
+            size='xl'
+          />
+        </Flex>}
 
-{reset &&  <Flex minWidth='max-content' justifyContent='center'> <Button onClick={() => {resetmap()}} colorScheme='teal' size='lg'>
-        
-       Reset Map
-      </Button> </Flex>} 
+        {reset && <Flex minWidth='max-content' justifyContent='center'> <Button onClick={() => { resetmap() }} colorScheme='teal' size='lg'>
 
-      {count >= 1 &&  <Flex minWidth='max-content' justifyContent='center'> <Button onClick={() => {selectuser()}} colorScheme='teal' size='lg'>select user's location</Button> </Flex> }
-      {countuser >= 1 &&  <Flex minWidth='max-content' justifyContent='center'> <Button onClick={calculateDistance} colorScheme='teal' size='lg'>calculate Distance</Button> </Flex> }
-      
-        { markers.map((marker , index) => (
+          Reset Map
+        </Button> </Flex>}
+
+        {count >= 1 && <Flex minWidth='max-content' justifyContent='center'> <Button onClick={() => { selectuser() }} colorScheme='teal' size='lg'>select user's location</Button> </Flex>}
+        {countuser >= 1 && <Flex minWidth='max-content' justifyContent='center'> <Button onClick={calculateDistance} colorScheme='teal' size='lg'>calculate Distance</Button> </Flex>}
+
+        {markers.map((marker, index) => (
           <Marker key={index} label={'W'}
             position={{
               lat: marker.lat,
               lng: marker.lng
-            }} /> 
+            }} />
         ))}
 
-       
-        { users.map((u , index) => (
-          <Marker key={index}  label={'U'}
+
+        {users.map((u, index) => (
+          <Marker key={index} label={'U'}
             position={{
               lat: u.lat,
               lng: u.lng
-            }} /> 
+            }} />
         ))}
 
         {console.log(path)};
 
-        {path.length >= 1 &&  path.map((p , index) => {
-          if(p.length >= 1) {
-          return <DirectionsService
-          key={index}
-          options={{
-            origin: p[0],
-            destination: p[p.length - 1],
-            waypoints: p.map(waypoint => ({ location: waypoint })),
-            travelMode: 'DRIVING'
-          }}
-          callback={directionsCallback}
-        />
-        }
+        {path.length >= 1 && path.map((p, index) => {
+          if (p.length >= 1) {
+            return <DirectionsService
+              key={index}
+              options={{
+                origin: p[0],
+                destination: p[p.length - 1],
+                waypoints: p.map(waypoint => ({ location: waypoint })),
+                travelMode: 'DRIVING'
+              }}
+              callback={directionsCallback}
+            />
+          }
         })}
-        
 
-       { directions.length >= path.length && directions.map((d ,ind) => {return  <DirectionsRenderer key={ind} directions={d}  options={{ draggable: true , preserveViewport : true }}  />})}
-      
 
-     {/* {directions && <DirectionsRenderer directions={directions}  options={{ draggable: true , preserveViewport : true }}  />}  */}
-     {directions.length >= 1 && <Alert status='success' textAlign='center' flexDirection='row'  
-  alignItems='center'
-  justifyContent='center'>
-    <AlertIcon />
-   Distance of the optimal path is {dis /1000.0} Kilometers
-  </Alert>}
+        {directions.length >= path.length && directions.map((d, ind) => { return <DirectionsRenderer key={ind} directions={d} options={{ draggable: true, preserveViewport: true }} /> })}
+
+
+        {directions.length >= 1 && <Alert status='success' textAlign='center' flexDirection='row'
+          alignItems='center'
+          justifyContent='center'>
+          <AlertIcon />
+          Distance of the optimal path is {dis / 1000.0} Kilometers
+        </Alert>}
 
       </GoogleMap>
     </Flex>
